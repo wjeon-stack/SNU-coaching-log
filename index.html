@@ -411,14 +411,10 @@ function renderSuccess(){
   <div class="success-screen">
     <div class="success-icon">✓</div>
     <h2>코칭일지가 제출되었습니다</h2>
-    <p>작성해주셔서 감사합니다.<br>다음 회기 코칭일지도 이 페이지에서 이어서 작성해 주시면 됩니다.</p>
     <button class="again-btn" id="againBtn">새 일지 작성하기</button>
   </div>
   `;
-  document.getElementById('againBtn').addEventListener('click', ()=>{
-    selectedOscar.clear();
-    renderForm();
-  });
+  document.getElementById('againBtn').addEventListener('click', renderForm);
 }
 
 // ---- 관리자 화면 (?admin=1) ----
