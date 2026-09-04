@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>서울대학교 대학원생 대상 1:1 커리어코칭 회기별 코칭일지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16235C;
+    --blue:#2F6FED;
+    --blue-tint:#EAF1FF;
+    --orange:#FF7A32;
+    --orange-tint:#FFF0E4;
+    --pink:#FF4D79;
+    --pink-tint:#FFEAF0;
+    --paper:#F5F7FC;
+    --white:#FFFFFF;
+    --ink:#20242C;
+    --slate:#697386;
+    --line:#E7ECF7;
+    --danger:#D9455F;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{background:var(--navy);}
+  body{
+    margin:0;
+    font-family:'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+    background:var(--navy);
+    color:var(--ink);
+    line-height:1.65;
+  }
+  .wrap{max-width:720px; margin:0 auto; padding:0 16px 60px;}
+
+  .band{position:relative; height:74px; overflow:hidden;}
+  .band .star{position:absolute; color:#FFFFFF; opacity:.85;}
+  .band .star.s1{top:14px; left:12%; font-size:16px;}
+  .band .star.s2{top:36px; left:26%; font-size:10px;}
+  .band .star.s3{top:10px; right:16%; font-size:13px;}
+  .band .star.s4{top:40px; right:8%; font-size:18px;}
+  .band .dot{position:absolute; border-radius:50%; background:rgba(255,255,255,.35);}
+  .band .dot.d1{width:8px; height:8px; top:22px; left:44%;}
+  .band .dot.d2{width:5px; height:5px; top:48px; right:32%;}
+
+  .sheet{
+    background:var(--white);
+    border-radius:22px;
+    padding:0;
+    margin-top:-26px;
+    box-shadow:0 18px 40px rgba(15,25,70,0.25);
+  }
+  .sheet-inner{padding:32px 30px 28px;}
+  @media (max-width:520px){ .sheet-inner{padding:26px 20px 24px;} }
+
+  .hero{padding:6px 0 24px; text-align:center;}
+  .hero .eyebrow{
+    display:inline-block;
+    font-size:12px; font-weight:800; letter-spacing:.03em;
+    color:var(--white); background:var(--orange);
+    padding:6px 14px; border-radius:999px; margin-bottom:16px;
+  }
+  .hero h1{
+    font-size:24px; font-weight:800; color:var(--navy);
+    margin:0 0 10px; letter-spacing:-0.01em; line-height:1.45; word-break:keep-all;
+  }
+  @media (max-width:420px){ .hero h1{font-size:20px; line-height:1.4;} }
+  .hero p{font-size:13.5px; color:var(--slate); margin:0; word-break:keep-all;}
+  .hero-dots{display:flex; justify-content:center; gap:7px; margin-top:16px;}
+  .hero-dots span{width:7px; height:7px; border-radius:50%;}
+  .hero-dots span:nth-child(1){background:var(--blue);}
+  .hero-dots span:nth-child(2){background:var(--orange);}
+  .hero-dots span:nth-child(3){background:var(--pink);}
+
+  .notice{
+    display:flex; align-items:flex-start; gap:10px;
+    background:var(--orange-tint); border-radius:12px; padding:12px 16px;
+    font-size:13px; font-weight:700; color:var(--navy); margin:20px 0 24px;
+  }
+  .notice-icon{
+    width:22px; height:22px; border-radius:50%; background:var(--orange); color:var(--white);
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800;
+    flex-shrink:0; margin-top:1px;
+  }
+
+  .card{
+    background:var(--white); border:1px solid var(--line); border-radius:var(--radius);
+    padding:20px 22px; margin-bottom:12px; box-shadow:0 2px 10px rgba(22,35,92,0.04);
+  }
+  .card-2col{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:520px){ .card-2col{grid-template-columns:1fr;} }
+  .q-label{
+    font-size:14px; font-weight:700; color:var(--ink); margin-bottom:8px;
+    display:flex; align-items:flex-start; gap:6px;
+  }
+  .q-label .req{color:var(--pink); font-weight:700;}
+  .q-desc{font-size:12.5px; color:var(--slate); margin:-4px 0 12px;}
+  input[type="text"], input[type="date"], select, textarea{
+    width:100%; font-family:inherit; font-size:14.5px; color:var(--ink);
+    background:var(--paper); border:1.5px solid var(--line); border-radius:10px;
+    padding:10px 12px; outline:none; transition:border-color .15s ease, background .15s ease;
+  }
+  input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus{
+    border-color:var(--blue); background:var(--white);
+  }
+  input[type="date"]{line-height:1.4;}
+  input[type="date"]::-webkit-calendar-picker-indicator{
+    opacity:.6; cursor:pointer;
+  }
+  textarea{resize:vertical; min-height:90px;}
+  .time-range-row{display:flex; align-items:center; gap:10px; margin-top:10px;}
+  .time-range-row select{flex:1;}
+  .time-sep{font-size:13px; font-weight:700; color:var(--slate); flex-shrink:0;}
+  select{appearance:none; -webkit-appearance:none; cursor:pointer;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23697386' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat:no-repeat; background-position:right 13px center; padding-right:36px;
+  }
+
+  .error-msg{font-size:12.5px; color:var(--danger); margin-top:7px; display:none;}
+  .error-msg.show{display:block;}
+  .card.invalid{border-color:var(--danger);}
+
+  .submit-wrap{margin-top:26px; padding-top:6px;}
+  .submit-btn{
+    width:100%; background:var(--blue); color:var(--white); border:none; border-radius:14px;
+    padding:16px; font-size:16px; font-weight:800; cursor:pointer;
+    box-shadow:0 8px 20px rgba(47,111,237,0.32);
+    transition:background .15s ease, transform .1s ease;
+  }
+  .submit-btn:hover{background:#2559C7;}
+  .submit-btn:active{transform:scale(.99);}
+  .submit-btn:disabled{background:var(--slate); cursor:not-allowed; box-shadow:none;}
+  .submit-note{font-size:12px; color:var(--slate); text-align:center; margin-top:10px;}
+  .submit-fail{
+    display:none; background:var(--pink-tint); color:var(--danger); font-weight:700; font-size:13.5px;
+    border-radius:12px; padding:12px 16px; margin-bottom:14px; text-align:center;
+  }
+  .submit-fail.show{display:block;}
+
+  .page-footer{margin-top:24px; padding:0 16px 8px; display:flex; justify-content:center;}
+  .footer-inner{display:flex; flex-direction:column; align-items:flex-start;}
+  .footer-logo-wrap{display:inline-block;}
+  .footer-logo{height:32px; width:auto; display:block; filter:brightness(0) invert(1);}
+
+  .success-screen{max-width:560px; margin:80px auto; text-align:center; padding:0 20px;}
+  .success-icon{
+    width:60px; height:60px; border-radius:50%; background:var(--blue); color:var(--white);
+    display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 22px;
+    font-weight:800; box-shadow:0 8px 20px rgba(47,111,237,0.35);
+  }
+  .success-screen h2{font-size:19px; color:var(--white); margin:0 0 10px;}
+  .success-screen p{font-size:14px; color:rgba(255,255,255,0.75); word-break:keep-all;}
+  .success-screen .again-btn{
+    margin-top:26px; display:inline-block; background:var(--white); color:var(--navy);
+    border:none; border-radius:12px; padding:13px 26px; font-size:14px; font-weight:800; cursor:pointer;
+  }
+
+  .admin-wrap{max-width:1200px; margin:0 auto; padding:36px 20px 80px; background:var(--paper); min-height:100vh;}
+  .admin-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;}
+  .admin-header h1{font-size:18px; color:var(--navy); margin:0;}
+  .admin-btn{
+    background:var(--blue); color:var(--white); border:none; border-radius:10px;
+    padding:10px 16px; font-size:13.5px; font-weight:700; cursor:pointer;
+  }
+  .admin-btn:hover{background:#2559C7;}
+  .admin-table-wrap{overflow-x:auto;}
+  table.admin-table{width:100%; border-collapse:collapse; background:var(--white); border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(22,35,92,0.06);}
+  table.admin-table th{background:var(--navy); color:var(--white); font-size:11.5px; font-weight:800; padding:10px 12px; text-align:left; white-space:nowrap;}
+  table.admin-table td{font-size:12.5px; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; max-width:260px;}
+  table.admin-table tr:last-child td{border-bottom:none;}
+  .empty-admin{padding:60px 0; text-align:center; color:var(--slate);}
+
+  .admin-login{max-width:360px; margin:120px auto; background:var(--white); border-radius:16px; padding:28px 26px; box-shadow:0 8px 24px rgba(22,35,92,0.08);}
+  .admin-login h2{font-size:16px; color:var(--navy); margin:0 0 16px;}
+  .admin-login .error-msg{margin-top:10px;}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzXZ2MFk5lF-hnsoCvFw_oB8b5WuItt4hTooxv4aj46nIj28rbytVZpRVJcYdMyKLjx/exec";
+
+async function callApi(payload){
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
+
+function escapeHtml(str){
+  return String(str||'').replace(/[&<>"']/g, ch => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[ch]));
+}
+
+const HOUR_OPTIONS = Array.from({length:24}, (_, h) =>
+  `<option value="${String(h).padStart(2,'0')}:00">${h}시</option>`
+).join('');
+
+function renderForm(){
+  const app = document.getElementById('app');
+  app.innerHTML = `
+  <div class="wrap">
+    <div class="band">
+      <span class="star s1">✦</span><span class="star s2">✦</span>
+      <span class="star s3">✦</span><span class="star s4">✦</span>
+      <span class="dot d1"></span><span class="dot d2"></span>
+    </div>
+    <div class="sheet">
+      <div class="sheet-inner">
+        <div class="hero">
+          <span class="eyebrow">COACHING LOG</span>
+          <h1>서울대학교 대학원생 대상<br>1:1 커리어코칭 회기별 코칭일지</h1>
+          <p>코칭 주요 내용을 아래 양식에 맞춰 작성해 주세요.<br>매회기 종료 후 3일 이내 작성해주시면 감사하겠습니다.</p>
+          <div class="hero-dots"><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="notice">
+          <span class="notice-icon">i</span>
+          <span>피코치의 개인정보와 코칭 내용은 비밀을 유지하며, 동의 없이 외부에 공유하지 않습니다. 사실과 관찰 중심으로, 참가자의 발언은 가능한 표현 그대로 인용해 작성해 주세요.</span>
+        </div>
+
+        <form id="logForm">
+          <div class="card">
+            <div class="card-2col">
+              <div>
+                <div class="q-label">코치명 <span class="req">*</span></div>
+                <input type="text" id="q_coach" placeholder="성함을 입력해 주세요">
+                <div class="error-msg" id="err_coach">코치명을 입력해 주세요.</div>
+              </div>
+              <div>
+                <div class="q-label">피코치명 <span class="req">*</span></div>
+                <input type="text" id="q_coachee" placeholder="성함을 입력해 주세요">
+                <div class="error-msg" id="err_coachee">피코치명을 입력해 주세요.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-2col">
+              <div>
+                <div class="q-label">코칭방식 <span class="req">*</span></div>
+                <select id="q_method">
+                  <option value="">선택해 주세요</option>
+                  <option value="대면">대면</option>
+                  <option value="화상">화상 (Zoom 등)</option>
+                  <option value="기타">기타</option>
+                </select>
+                <div class="error-msg" id="err_method">코칭방식을 선택해 주세요.</div>
+              </div>
+              <div>
+                <div class="q-label">코칭회차 <span class="req">*</span></div>
+                <input type="text" id="q_session" placeholder="예: 1회차">
+                <div class="error-msg" id="err_session">코칭회차를 입력해 주세요.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="q-label">코칭일시 <span class="req">*</span></div>
+            <input type="date" id="q_date">
+            <div class="time-range-row">
+              <select id="q_time_start">
+                <option value="">시작 시간</option>
+                ${HOUR_OPTIONS}
+              </select>
+              <span class="time-sep">~</span>
+              <select id="q_time_end">
+                <option value="">종료 시간</option>
+                ${HOUR_OPTIONS}
+              </select>
+            </div>
+            <div class="error-msg" id="err_date">코칭일자와 시작·종료 시간을 모두 선택해 주세요.</div>
+          </div>
+
+          <div class="card">
+            <div class="q-label">현재 이슈 및 배경 <span class="req">*</span></div>
+            <div class="q-desc">피코치가 다루고자 하는 주제와 관련 상황을 간략히 기록해 주세요.</div>
+            <textarea id="q_issue"></textarea>
+            <div class="error-msg" id="err_issue">내용을 작성해 주세요.</div>
+          </div>
+
+          <div class="card">
+            <div class="q-label">주요내용 <span class="req">*</span></div>
+            <div class="q-desc">핵심 질문, 피코치의 주요 발언·발견, 강점·자원·가능성 등을 중심으로 기록해 주세요.</div>
+            <textarea id="q_content"></textarea>
+            <div class="error-msg" id="err_content">내용을 작성해 주세요.</div>
+          </div>
+
+          <div class="card">
+            <div class="q-label">실행계획 <span class="req">*</span></div>
+            <div class="q-desc">코칭을 통해 정한 구체적인 다음 행동, 실행 시점과 점검 방법을 기록해 주세요.</div>
+            <textarea id="q_action"></textarea>
+            <div class="error-msg" id="err_action">내용을 작성해 주세요.</div>
+          </div>
+
+          <div class="card">
+            <div class="q-label">코치제언점 <span class="req">*</span></div>
+            <div class="q-desc">코칭 후 코치의 관찰, 다음 회차에서 이어갈 포인트와 스스로의 성찰을 기록해 주세요.</div>
+            <textarea id="q_remark"></textarea>
+            <div class="error-msg" id="err_remark">내용을 작성해 주세요.</div>
+          </div>
+
+          <div class="submit-wrap">
+            <div class="submit-fail" id="submitFail"></div>
+            <button type="submit" class="submit-btn" id="submitBtn">코칭일지 제출하기</button>
+            <div class="submit-note">제출 후에도 새 일지를 이어서 작성하실 수 있습니다.</div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="footer-inner">
+        <div class="footer-logo-wrap"><img src="logo.png" alt="클립스컨설팅" class="footer-logo"></div>
+      </div>
+    </div>
+  </div>
+  `;
+
+  document.getElementById('logForm').addEventListener('submit', handleSubmit);
+}
+
+function clearErrors(){
+  document.querySelectorAll('.error-msg.show').forEach(el => el.classList.remove('show'));
+  document.querySelectorAll('.card.invalid').forEach(el => el.classList.remove('invalid'));
+}
+
+function showError(errId, cardEl){
+  const err = document.getElementById(errId);
+  if(err) err.classList.add('show');
+  if(cardEl) cardEl.classList.add('invalid');
+}
+
+async function handleSubmit(e){
+  e.preventDefault();
+  clearErrors();
+  let valid = true;
+
+  const coach = document.getElementById('q_coach').value.trim();
+  const coachee = document.getElementById('q_coachee').value.trim();
+  const method = document.getElementById('q_method').value;
+  const session = document.getElementById('q_session').value.trim();
+  const dateVal = document.getElementById('q_date').value;
+  const startVal = document.getElementById('q_time_start').value;
+  const endVal = document.getElementById('q_time_end').value;
+  const date = (dateVal && startVal && endVal) ? `${dateVal} ${startVal}~${endVal}` : '';
+  const issue = document.getElementById('q_issue').value.trim();
+  const content = document.getElementById('q_content').value.trim();
+  const action = document.getElementById('q_action').value.trim();
+  const remark = document.getElementById('q_remark').value.trim();
+
+  if(!coach){ showError('err_coach', document.getElementById('q_coach').closest('.card')); valid=false; }
+  if(!coachee){ showError('err_coachee', document.getElementById('q_coachee').closest('.card')); valid=false; }
+  if(!method){ showError('err_method', document.getElementById('q_method').closest('.card')); valid=false; }
+  if(!session){ showError('err_session', document.getElementById('q_session').closest('.card')); valid=false; }
+  if(!date){ showError('err_date', document.getElementById('q_date').closest('.card')); valid=false; }
+  if(!issue){ showError('err_issue', document.getElementById('q_issue').closest('.card')); valid=false; }
+  if(!content){ showError('err_content', document.getElementById('q_content').closest('.card')); valid=false; }
+  if(!action){ showError('err_action', document.getElementById('q_action').closest('.card')); valid=false; }
+  if(!remark){ showError('err_remark', document.getElementById('q_remark').closest('.card')); valid=false; }
+
+  if(!valid){
+    document.querySelector('.card.invalid, .error-msg.show')?.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  const record = { coach, coachee, method, session, date, issue, content, action, remark };
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  const prevText = btn.textContent;
+  btn.textContent = '제출 중...';
+
+  try{
+    const data = await callApi(record);
+    if(data.error){
+      const err = new Error(data.error);
+      err.code = data.error;
+      throw err;
+    }
+    renderSuccess();
+  }catch(err){
+    btn.disabled = false;
+    btn.textContent = prevText;
+    let msg = '제출 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+    if(err && err.code === 'invalid_input'){
+      msg = '입력값을 다시 확인해 주세요.';
+    } else if(!navigator.onLine){
+      msg = '인터넷 연결을 확인한 후 다시 시도해 주세요.';
+    }
+    const fail = document.getElementById('submitFail');
+    if(fail){
+      fail.textContent = msg;
+      fail.classList.add('show');
+      fail.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+    console.error(err);
+  }
+}
+
+function renderSuccess(){
+  const app = document.getElementById('app');
+  app.innerHTML = `
+  <div class="success-screen">
+    <div class="success-icon">✓</div>
+    <h2>코칭일지가 제출되었습니다</h2>
+    <p>작성해주셔서 감사합니다.<br>다음 회기 코칭일지도 이 페이지에서 이어서 작성해 주시면 됩니다.</p>
+    <button class="again-btn" id="againBtn">새 일지 작성하기</button>
+  </div>
+  `;
+  document.getElementById('againBtn').addEventListener('click', ()=>{
+    selectedOscar.clear();
+    renderForm();
+  });
+}
+
+// ---- 관리자 화면 (?admin=1) ----
+function renderAdminLogin(prevError){
+  const app = document.getElementById('app');
+  app.innerHTML = `
+  <div class="admin-login">
+    <h2>코칭일지 관리자 로그인</h2>
+    <input type="text" id="adminToken" placeholder="관리자 토큰을 입력하세요" autocomplete="off">
+    <div class="error-msg" id="loginErr">${prevError ? escapeHtml(prevError) : ''}</div>
+    <button class="admin-btn" id="loginBtn" style="width:100%; margin-top:14px;">확인</button>
+  </div>
+  `;
+  if(prevError) document.getElementById('loginErr').classList.add('show');
+
+  document.getElementById('loginBtn').addEventListener('click', async ()=>{
+    const token = document.getElementById('adminToken').value.trim();
+    if(!token) return;
+    sessionStorage.setItem('adminToken', token);
+    await renderAdmin();
+  });
+  document.getElementById('adminToken').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter') document.getElementById('loginBtn').click();
+  });
+}
+
+async function renderAdmin(){
+  const token = sessionStorage.getItem('adminToken') || '';
+  if(!token){
+    renderAdminLogin();
+    return;
+  }
+
+  const app = document.getElementById('app');
+  app.innerHTML = `<div class="admin-wrap"><div class="empty-admin">불러오는 중...</div></div>`;
+
+  let json;
+  try{
+    const res = await fetch(API_URL + '?token=' + encodeURIComponent(token), {cache:'no-store'});
+    json = await res.json();
+  }catch(e){
+    app.innerHTML = `<div class="admin-wrap"><div class="empty-admin">불러오기에 실패했습니다.</div></div>`;
+    return;
+  }
+
+  if(json.error === 'unauthorized'){
+    sessionStorage.removeItem('adminToken');
+    renderAdminLogin('토큰이 올바르지 않습니다.');
+    return;
+  }
+
+  const records = json.records || [];
+
+  app.innerHTML = `
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <h1>코칭일지 제출 현황 (총 ${records.length}건)</h1>
+      <div style="display:flex; gap:8px;">
+        <button class="admin-btn" id="refreshBtn">새로고침</button>
+        <button class="admin-btn" id="exportBtn">CSV 다운로드</button>
+        <button class="admin-btn" id="deleteAllBtn" style="background:var(--danger);">전체 삭제</button>
+      </div>
+    </div>
+    ${records.length === 0 ? '<div class="empty-admin">아직 제출된 코칭일지가 없습니다.</div>' : `
+    <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead><tr>
+        <th>제출시각</th><th>코치명</th><th>피코치명</th><th>코칭방식</th><th>코칭회차</th><th>코칭일시</th>
+        <th>현재이슈 및 배경</th><th>주요내용</th><th>실행계획</th><th>코치제언점</th>
+      </tr></thead>
+      <tbody>
+        ${records.map(r=>`
+          <tr>
+            <td>${new Date(r.submitted_at).toLocaleString('ko-KR')}</td>
+            <td>${escapeHtml(r.coach)}</td>
+            <td>${escapeHtml(r.coachee)}</td>
+            <td>${escapeHtml(r.method)}</td>
+            <td>${escapeHtml(r.session)}</td>
+            <td>${escapeHtml(r.session_date)}</td>
+            <td>${escapeHtml(r.issue)}</td>
+            <td>${escapeHtml(r.content)}</td>
+            <td>${escapeHtml(r.action)}</td>
+            <td>${escapeHtml(r.remark)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    </div>
+    `}
+  </div>
+  `;
+
+  document.getElementById('refreshBtn').addEventListener('click', renderAdmin);
+
+  document.getElementById('deleteAllBtn').addEventListener('click', async ()=>{
+    if(!confirm('정말로 전체 코칭일지를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return;
+    const res = await fetch(API_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({action:'deleteAll', token})
+    });
+    const data = await res.json();
+    if(data.error === 'unauthorized'){
+      sessionStorage.removeItem('adminToken');
+      renderAdminLogin('토큰이 올바르지 않습니다.');
+      return;
+    }
+    await renderAdmin();
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', ()=>{
+    const headers = ['제출시각','코치명','피코치명','코칭방식','코칭회차','코칭일시','현재이슈및배경','주요내용','실행계획','코치제언점'];
+    const rows = records.map(r=>[
+      new Date(r.submitted_at).toLocaleString('ko-KR'), r.coach, r.coachee, r.method, r.session, r.session_date,
+      r.issue, r.content, r.action, r.remark
+    ]);
+    const csvLines = [headers, ...rows].map(row =>
+      row.map(cell => `"${String(cell||'').replace(/"/g,'""')}"`).join(',')
+    );
+    const csvContent = '﻿' + csvLines.join('\r\n');
+    const blob = new Blob([csvContent], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '코칭일지_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+}
+
+// entry point
+const params = new URLSearchParams(window.location.search);
+if(params.get('admin') === '1'){
+  renderAdmin();
+} else {
+  renderForm();
+}
+</script>
+</body>
+</html>
