@@ -373,6 +373,12 @@ async function handleSubmit(e){
 
   const record = { coach, coachee, method, session, date, issue, content, action, remark };
 
+  const existingFail = document.getElementById('submitFail');
+  if(existingFail){
+    existingFail.classList.remove('show');
+    existingFail.textContent = '';
+  }
+
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   const prevText = btn.textContent;
