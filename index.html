@@ -250,9 +250,11 @@ function renderForm(){
                   <option value="">선택해 주세요</option>
                   <option value="대면">대면</option>
                   <option value="화상">화상 (Zoom 등)</option>
+                  <option value="전화">전화</option>
                   <option value="기타">기타</option>
                 </select>
-                <div class="error-msg" id="err_method">코칭방식을 선택해 주세요.</div>
+                <input type="text" id="q_method_other" placeholder="코칭방식을 직접 입력해 주세요" style="display:none; margin-top:10px">
+                <div class="error-msg" id="err_method">코칭방식을 선택하고, '기타'인 경우 직접 입력해 주세요.</div>
               </div>
               <div>
                 <div class="q-label">코칭회차 <span class="req">*</span></div>
@@ -325,6 +327,16 @@ function renderForm(){
   `;
 
   document.getElementById('logForm').addEventListener('submit', handleSubmit);
+
+  document.getElementById('q_method').addEventListener('change', (e)=>{
+    const otherInput = document.getElementById('q_method_other');
+    if(e.target.value === '기타'){
+      otherInput.style.display = 'block';
+    } else {
+      otherInput.style.display = 'none';
+      otherInput.value = '';
+    }
+  });
 }
 
 function clearErrors(){
@@ -345,7 +357,8 @@ async function handleSubmit(e){
 
   const coach = document.getElementById('q_coach').value.trim();
   const coachee = document.getElementById('q_coachee').value.trim();
-  const method = document.getElementById('q_method').value;
+  let method = document.getElementById('q_method').value;
+  const methodOther = document.getElementById('q_method_other').value.trim();
   const session = document.getElementById('q_session').value.trim();
   const dateVal = document.getElementById('q_date').value;
   const startVal = document.getElementById('q_time_start').value;
@@ -359,6 +372,10 @@ async function handleSubmit(e){
   if(!coach){ showError('err_coach', document.getElementById('q_coach').closest('.card')); valid=false; }
   if(!coachee){ showError('err_coachee', document.getElementById('q_coachee').closest('.card')); valid=false; }
   if(!method){ showError('err_method', document.getElementById('q_method').closest('.card')); valid=false; }
+  else if(method === '기타'){
+    if(!methodOther){ showError('err_method', document.getElementById('q_method').closest('.card')); valid=false; }
+    else { method = methodOther; }
+  }
   if(!session){ showError('err_session', document.getElementById('q_session').closest('.card')); valid=false; }
   if(!date){ showError('err_date', document.getElementById('q_date').closest('.card')); valid=false; }
   if(!issue){ showError('err_issue', document.getElementById('q_issue').closest('.card')); valid=false; }
