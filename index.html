@@ -199,9 +199,10 @@ function escapeHtml(str){
   }[ch]));
 }
 
-const HOUR_OPTIONS = Array.from({length:24}, (_, h) =>
-  `<option value="${String(h).padStart(2,'0')}:00">${h}시</option>`
-).join('');
+const HOUR_OPTIONS = Array.from({length:24}, (_, h) => [
+  `<option value="${String(h).padStart(2,'0')}:00">${h}시</option>`,
+  `<option value="${String(h).padStart(2,'0')}:30">${h}시 30분</option>`
+].join('')).join('');
 
 function renderForm(){
   const app = document.getElementById('app');
