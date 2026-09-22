@@ -118,6 +118,15 @@
     background-repeat:no-repeat; background-position:right 13px center; padding-right:36px;
   }
 
+  .radio-group{display:flex; flex-direction:column; gap:8px;}
+  .radio-item{
+    display:flex; align-items:center; gap:10px; cursor:pointer;
+    background:var(--paper); border:1.5px solid var(--line); border-radius:10px;
+    padding:11px 14px; font-size:14.5px; color:var(--ink);
+  }
+  .radio-item input{width:auto; margin:0; accent-color:var(--blue);}
+  .radio-item:has(input:checked){border-color:var(--blue); background:var(--blue-tint); font-weight:700;}
+
   .error-msg{font-size:12.5px; color:var(--danger); margin-top:7px; display:none;}
   .error-msg.show{display:block;}
   .card.invalid{border-color:var(--danger);}
@@ -199,6 +208,48 @@ function escapeHtml(str){
   }[ch]));
 }
 
+// 코치-피코치 매칭 (코칭 진행 현황 대시보드와 동일한 명단). 대시보드와 이름이 다르면 자동 연동이 되지 않는다.
+const COACH_PAIRS = [
+  ['구도일','박건도'],['구남규','안재균'],['김문규','김민재'],['김상종','지다빈'],['김세연','박소진'],['김은아','김주현'],
+  ['김수한','김인하'],['김장혁','문송주'],['조건영','이재홍'],['한승희','이선민'],['신미영','권영선'],['박대진','황해수'],
+  ['문채영','안예진'],['김희영','변한준'],['민재원','강혁준'],['임동찬','홍성인'],['박상구','문상현'],['박현미','윤서우'],
+  ['이종문','박초아'],['이종민','안명인'],['이종민','한주원'],['서정현','이준의'],['김태봉','박지은'],['이병언','김수민'],
+  ['최호석','이주현'],['박혜준','유우정'],['설도환','원종빈'],['신자영','김주연'],['신정호','최민서'],['안나은','이정환']
+];
+const COACH_NAMES = Array.from(new Set(COACH_PAIRS.map(p => p[0])));
+const NEXT_LABELS = {'프리세션':'1회기', '1회기':'2회기', '2회기':'3회기(선택)'};
+
+function updateCoacheeOptions(){
+  const coach = document.getElementById('q_coach').value;
+  const sel = document.getElementById('q_coachee');
+  const list = COACH_PAIRS.filter(p => p[0] === coach).map(p => p[1]);
+  if(!coach){
+    sel.innerHTML = '<option value="">먼저 코치명을 선택해 주세요</option>';
+    return;
+  }
+  sel.innerHTML = (list.length === 1 ? '' : '<option value="">선택해 주세요</option>') +
+    list.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+}
+
+function updateNextCard(){
+  const session = document.getElementById('q_session').value;
+  const card = document.getElementById('nextCard');
+  if(session === '3회기'){
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
+  document.getElementById('nextLabel').textContent = NEXT_LABELS[session] || '다음 회기';
+}
+
+function updateNextDateVisibility(){
+  const checked = document.querySelector('input[name="q_next_status"]:checked');
+  const wrap = document.getElementById('nextDateWrap');
+  const isFixed = checked && checked.value === '일정 확정';
+  wrap.style.display = isFixed ? 'block' : 'none';
+  if(!isFixed) document.getElementById('q_next_date').value = '';
+}
+
 const HOUR_OPTIONS = Array.from({length:24}, (_, h) => [
   `<option value="${String(h).padStart(2,'0')}:00">${h}시</option>`,
   `<option value="${String(h).padStart(2,'0')}:30">${h}시 30분</option>`
@@ -232,13 +283,18 @@ function renderForm(){
             <div class="card-2col">
               <div>
                 <div class="q-label">코치명 <span class="req">*</span></div>
-                <input type="text" id="q_coach" placeholder="성함을 입력해 주세요">
-                <div class="error-msg" id="err_coach">코치명을 입력해 주세요.</div>
+                <select id="q_coach">
+                  <option value="">본인 성함을 선택해 주세요</option>
+                  ${COACH_NAMES.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('')}
+                </select>
+                <div class="error-msg" id="err_coach">코치명을 선택해 주세요.</div>
               </div>
               <div>
                 <div class="q-label">피코치명 <span class="req">*</span></div>
-                <input type="text" id="q_coachee" placeholder="성함을 입력해 주세요">
-                <div class="error-msg" id="err_coachee">피코치명을 입력해 주세요.</div>
+                <select id="q_coachee">
+                  <option value="">먼저 코치명을 선택해 주세요</option>
+                </select>
+                <div class="error-msg" id="err_coachee">피코치명을 선택해 주세요.</div>
               </div>
             </div>
           </div>
@@ -259,8 +315,14 @@ function renderForm(){
               </div>
               <div>
                 <div class="q-label">코칭회차 <span class="req">*</span></div>
-                <input type="text" id="q_session" placeholder="예: 1회차">
-                <div class="error-msg" id="err_session">코칭회차를 입력해 주세요.</div>
+                <select id="q_session">
+                  <option value="">선택해 주세요</option>
+                  <option value="프리세션">프리세션</option>
+                  <option value="1회기">1회기</option>
+                  <option value="2회기">2회기</option>
+                  <option value="3회기">3회기 (선택)</option>
+                </select>
+                <div class="error-msg" id="err_session">코칭회차를 선택해 주세요.</div>
               </div>
             </div>
           </div>
@@ -310,6 +372,20 @@ function renderForm(){
             <div class="error-msg" id="err_remark">내용을 작성해 주세요.</div>
           </div>
 
+          <div class="card" id="nextCard">
+            <div class="q-label"><span id="nextLabel">다음 회기</span> 코칭 일정 및 진행 현황 <span class="req">*</span></div>
+            <div class="q-desc">다음 회기 일정을 확정하셨다면 날짜를 선택해 주세요. 진행 현황 대시보드에 "진행예정"으로 자동 반영됩니다.</div>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="q_next_status" value="일정 확정"><span>일정 확정 (날짜 선택)</span></label>
+              <label class="radio-item"><input type="radio" name="q_next_status" value="일정 미정"><span>일정 조율 중 (아직 미정)</span></label>
+              <label class="radio-item"><input type="radio" name="q_next_status" value="다음 회기 없음"><span>다음 회기 없음 / 진행하지 않음</span></label>
+            </div>
+            <div id="nextDateWrap" style="display:none; margin-top:12px">
+              <input type="date" id="q_next_date">
+            </div>
+            <div class="error-msg" id="err_next">다음 회기 진행 현황을 선택해 주세요.</div>
+          </div>
+
           <div class="submit-wrap">
             <div class="submit-fail" id="submitFail"></div>
             <button type="submit" class="submit-btn" id="submitBtn">코칭일지 제출하기</button>
@@ -328,6 +404,9 @@ function renderForm(){
   `;
 
   document.getElementById('logForm').addEventListener('submit', handleSubmit);
+  document.getElementById('q_coach').addEventListener('change', updateCoacheeOptions);
+  document.getElementById('q_session').addEventListener('change', updateNextCard);
+  document.querySelectorAll('input[name="q_next_status"]').forEach(r => r.addEventListener('change', updateNextDateVisibility));
 
   document.getElementById('q_method').addEventListener('change', (e)=>{
     const otherInput = document.getElementById('q_method_other');
@@ -384,12 +463,36 @@ async function handleSubmit(e){
   if(!action){ showError('err_action', document.getElementById('q_action').closest('.card')); valid=false; }
   if(!remark){ showError('err_remark', document.getElementById('q_remark').closest('.card')); valid=false; }
 
+  // 마지막 질문: 다음 회기 일정/현황 (3회기 일지는 해당 없음)
+  let nextStatus = '';
+  let nextDate = '';
+  if(session !== '3회기'){
+    const checked = document.querySelector('input[name="q_next_status"]:checked');
+    nextStatus = checked ? checked.value : '';
+    nextDate = document.getElementById('q_next_date').value;
+    const nextCard = document.getElementById('nextCard');
+    const errNext = document.getElementById('err_next');
+    if(!nextStatus){
+      errNext.textContent = '다음 회기 진행 현황을 선택해 주세요.';
+      showError('err_next', nextCard); valid=false;
+    } else if(nextStatus === '일정 확정'){
+      if(!nextDate){
+        errNext.textContent = '다음 회기 일정 날짜를 선택해 주세요.';
+        showError('err_next', nextCard); valid=false;
+      } else if(dateVal && nextDate <= dateVal){
+        errNext.textContent = '다음 회기 일정은 이번 코칭일 이후 날짜로 선택해 주세요.';
+        showError('err_next', nextCard); valid=false;
+      }
+    }
+    if(nextStatus !== '일정 확정') nextDate = '';
+  }
+
   if(!valid){
     document.querySelector('.card.invalid, .error-msg.show')?.scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
 
-  const record = { coach, coachee, method, session, date, issue, content, action, remark };
+  const record = { coach, coachee, method, session, date, issue, content, action, remark, next_status: nextStatus, next_date: nextDate };
 
   const existingFail = document.getElementById('submitFail');
   if(existingFail){
@@ -507,7 +610,7 @@ async function renderAdmin(){
     <table class="admin-table">
       <thead><tr>
         <th>제출시각</th><th>코치명</th><th>피코치명</th><th>코칭방식</th><th>코칭회차</th><th>코칭일시</th>
-        <th>현재이슈 및 배경</th><th>주요내용</th><th>실행계획</th><th>코치제언점</th>
+        <th>현재이슈 및 배경</th><th>주요내용</th><th>실행계획</th><th>코치제언점</th><th>다음회기현황</th><th>다음회기일정</th>
       </tr></thead>
       <tbody>
         ${records.map(r=>`
@@ -522,6 +625,8 @@ async function renderAdmin(){
             <td>${escapeHtml(r.content)}</td>
             <td>${escapeHtml(r.action)}</td>
             <td>${escapeHtml(r.remark)}</td>
+            <td>${escapeHtml(r.next_status)}</td>
+            <td>${escapeHtml(r.next_date)}</td>
           </tr>
         `).join('')}
       </tbody>
@@ -550,10 +655,10 @@ async function renderAdmin(){
   });
 
   document.getElementById('exportBtn').addEventListener('click', ()=>{
-    const headers = ['제출시각','코치명','피코치명','코칭방식','코칭회차','코칭일시','현재이슈및배경','주요내용','실행계획','코치제언점'];
+    const headers = ['제출시각','코치명','피코치명','코칭방식','코칭회차','코칭일시','현재이슈및배경','주요내용','실행계획','코치제언점','다음회기현황','다음회기일정'];
     const rows = records.map(r=>[
       new Date(r.submitted_at).toLocaleString('ko-KR'), r.coach, r.coachee, r.method, r.session, r.session_date,
-      r.issue, r.content, r.action, r.remark
+      r.issue, r.content, r.action, r.remark, r.next_status, r.next_date
     ]);
     const csvLines = [headers, ...rows].map(row =>
       row.map(cell => `"${String(cell||'').replace(/"/g,'""')}"`).join(',')
